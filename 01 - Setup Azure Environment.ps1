@@ -8,6 +8,7 @@
 #
 #   Revisionen: yyyy-dd-mm
 #                   - ...
+# 
 #	Projekt:	SQL Saturday Oregon 2019
 #
 #	PowerShell Version: 5.1
