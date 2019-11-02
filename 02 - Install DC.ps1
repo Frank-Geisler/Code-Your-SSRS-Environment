@@ -77,3 +77,43 @@ Set-ExecutionPolicy Bypass `
 # 04. Install Software
 #----------------------------------------------------------------------------
 choco install googlechrome -y    
+
+#----------------------------------------------------------------------------
+# 05. Create Users
+#----------------------------------------------------------------------------
+$AccountPath = 'CN=Users,DC=ssrs,DC=net'
+$ReportUser_username = 'ReportUser'
+$ReportUser_password = ConvertTo-SecureString 'Pa$w0rd1' `
+                        -AsPlaintext `
+                        -Force
+$ReportUser_description = 'This is a Reporting Services User'
+
+New-ADUser `
+    -Path $AccountPath `
+    -Name $ReportUser_username `
+    -AccountPassword $ReportUser_password `
+    -Description $ReportUser_description `
+    -ChangePasswordAtLogon:$false `
+    -CannotChangePassword:$true `
+    -PasswordNeverExpires:$true `
+    -Enabled:$true
+
+#----------------------------------------------------------------------------
+# 06. - AD-User ReportAdmin erstellen
+#----------------------------------------------------------------------------
+$AccountPath = 'CN=Users,DC=ssrs,DC=net'
+$ReportAdmin_username = 'ReportAdmin'
+$ReportAdmin_password = ConvertTo-SecureString 'Pa$w0rd1' `
+                        -AsPlaintext `
+                        -Force
+$ReportAdmin_description = 'This is the Report Admin User'
+
+New-ADUser `
+    -Path $AccountPath `
+    -Name $ReportAdmin_username `
+    -AccountPassword $ReportAdmin_password `
+    -Description $ReportAdmin_description `
+    -ChangePasswordAtLogon:$false `
+    -CannotChangePassword:$true `
+    -PasswordNeverExpires:$true `
+    -Enabled:$true
