@@ -21,11 +21,21 @@
 #============================================================================*/
 
 #----------------------------------------------------------------------------
-# 00. Variablen
+# 00. Variables
 #----------------------------------------------------------------------------
 $computer_name = 'sql'
 $domain_name = 'ssrs.net'
 $admin_user = 'SSRS\fgeisler'
+
+# ReportServer
+$database_servername = 'localhost'
+$report_servername = 'ReportServer'
+$report_serverinstance = 'SSRS'
+$sqlserver_version = 'SQLServer2017'
+
+# Encryption Key
+$encryptionkey_pass = 'Pa$$w0rd1'
+$encryptionkey_path = $env:USERPROFILE+'\Documents\ssrs_key.snk'
 
 #--------------------------------------------------------------------------
 # 01. - Client aktualisieren
@@ -59,7 +69,49 @@ Set-ExecutionPolicy Bypass `
     -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
 #----------------------------------------------------------------------------
-# 04. Software installieren
+# 04. Install Software
+#     Since 2017 Reporting Services is its own download
 #----------------------------------------------------------------------------
 choco install googlechrome -y 
+choco install ssrs -y
 
+#----------------------------------------------------------------------------
+# 05. Install ReportingServicesTools (PowerShell)
+#     https://github.com/microsoft/ReportingServicesTools
+#----------------------------------------------------------------------------
+Install-Module ReportingServicesTools
+
+#----------------------------------------------------------------------------
+# 06. Configure Reporting Services
+#----------------------------------------------------------------------------
+Set-RsDatabase `
+  -DatabaseServerName $database_servername `
+  -Name $report_servername `
+  -ReportServerInstance $report_serverinstance `
+  -DatabaseCredentialType ServiceAccount `
+ 
+Set-RsUrlReservation `
+  -SqlServerVersion $sqlserver_version `
+  -ReportServerInstance $report_serverinstance
+
+#----------------------------------------------------------------------------
+# 07. Open Firewall
+#----------------------------------------------------------------------------
+New-NetFirewallRule `
+    -DisplayName 'HTTP' `
+    -Direction Inbound `
+    –Protocol TCP `
+    –LocalPort 80 `
+    -Action Allow
+
+#----------------------------------------------------------------------------
+# 08. If it does not work: Restart Service
+#----------------------------------------------------------------------------
+Restart-Service `
+    -DisplayName "SQL Server Reporting Services"
+
+Backup-RSEncryptionKey `
+    -ReportServerInstance $report_serverinstance `
+    -Password $encryptionkey_pass `
+    -KeyPath $encryptionkey_path `
+    -SqlServerVersion $sqlserver_version
