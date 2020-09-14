@@ -1,27 +1,27 @@
 #============================================================================
-#	Datei:		01 - Setup Azure Environment.ps1
+#	File:		01 - Setup Azure Environment.ps1
 #
 #	Summary:	This script sets up a full environment for Reporting Services
 #               Development in Azure
 #
-#	Datum:		2019-11-01
+#	Date:		2019-11-01
 #
 #   Revisionen: yyyy-dd-mm
-#                   - ...
 # 
-#	Projekt:	SQL Saturday Oregon 2019
+#	Project:	SQL Saturday Oregon 2019
 #
 #	PowerShell Version: 5.1
 #------------------------------------------------------------------------------
-#	Geschrieben von 
-#       Frank Geisler, GDS Business Intelligence GmbH
+#	Written by
+#   Frank Geisler, GDS Business Intelligence GmbH
 #
-#   Dieses Script ist nur zu Lehr- bzw. Lernzwecken gedacht
-#
-#   DIESER CODE UND DIE ENTHALTENEN INFORMATIONEN WERDEN OHNE GEWÄHR JEGLICHER
-#   ART ZUR VERFÜGUNG GESTELLT, WEDER AUSDRÜCKLICH NOCH IMPLIZIT, EINSCHLIESSLICH,
-#   ABER NICHT BESCHRÄNKT AUF FUNKTIONALITÄT ODER EIGNUNG FÜR EINEN BESTIMMTEN
-#   ZWECK. SIE VERWENDEN DEN CODE AUF EIGENE GEFAHR.
+#   This script is intended only as a supplement to demos and lectures
+#	given by Frank Geisler.  
+#  
+#	THIS CODE AND INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF 
+#	ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED 
+#	TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+#	PARTICULAR PURPOSE.
 #============================================================================*/
 
 #----------------------------------------------------------------------------
