@@ -23,14 +23,14 @@
 #============================================================================*/
 
 #----------------------------------------------------------------------------
-# 00. Variablen
+# 00. variables
 #----------------------------------------------------------------------------
 $computer_name = 'client'
 $domain_name = 'ssrs.net'
 $admin_user = 'SSRS\fgeisler'
 
 #--------------------------------------------------------------------------
-# 01. - Client aktualisieren
+# 01. - update Client
 # -------------------------------------------------------------------------
 Set-ExecutionPolicy `
   -ExecutionPolicy Unrestricted `
@@ -44,7 +44,7 @@ Install-WindowsUpdate `
    -AutoReboot   
 
 #--------------------------------------------------------------------------
-# 02. - Computer zur Domäne hinzufügen
+# 02. - join Computer to domain
 # -------------------------------------------------------------------------
 Add-Computer `
     -ComputerName $computer_name `
@@ -54,14 +54,14 @@ Add-Computer `
     -Force 
 
 #----------------------------------------------------------------------------
-# 03. - Chocolately installieren
+# 03. - install Chocolately
 #----------------------------------------------------------------------------
 Set-ExecutionPolicy Bypass `
     -Scope Process `
     -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
 #----------------------------------------------------------------------------
-# 04. Software installieren
+# 04. install some software 
 #----------------------------------------------------------------------------
 choco install googlechrome -y 
 choco install azure-data-studio -y
@@ -72,16 +72,16 @@ choco install git -params '"/GitAndUnixToolsOnPath"' -y
 choco install gitkraken -y
 
 #----------------------------------------------------------------------------
-# 05. NavContainer Helper installieren
+# 05. install NavContainer Helper
 #----------------------------------------------------------------------------
 Install-Module `
     -Name 'NavContainerHelper'
 
-# Checken ob das richtig installiert wurde
+# Check if module was installed properly
 Write-NavContainerHelperWelcomeText  
 
 #----------------------------------------------------------------------------
-# 06. Firewall für HTTP öffnen
+# 06. open Firewall for HTTP traffic
 #----------------------------------------------------------------------------
 New-NetFirewallRule `
     -DisplayName 'HTTP' `
