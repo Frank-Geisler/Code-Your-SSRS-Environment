@@ -99,7 +99,7 @@ New-ADUser `
     -Enabled:$true
 
 #----------------------------------------------------------------------------
-# 06. - AD-User ReportAdmin erstellen
+# 06. - create AD-User ReportAdmin 
 #----------------------------------------------------------------------------
 $AccountPath = 'CN=Users,DC=ssrs,DC=net'
 $ReportAdmin_username = 'ReportAdmin'

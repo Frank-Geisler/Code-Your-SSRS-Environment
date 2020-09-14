@@ -38,7 +38,7 @@ $encryptionkey_pass = 'Pa$$w0rd1'
 $encryptionkey_path = $env:USERPROFILE+'\Documents\ssrs_key.snk'
 
 #--------------------------------------------------------------------------
-# 01. - Client aktualisieren
+# 01. - update sql vm
 # -------------------------------------------------------------------------
 Set-ExecutionPolicy `
   -ExecutionPolicy Unrestricted `
@@ -52,7 +52,7 @@ Install-WindowsUpdate `
    -AutoReboot   
 
 #--------------------------------------------------------------------------
-# 02. - Computer zur Domäne hinzufügen
+# 02. - join computer to the domain
 # -------------------------------------------------------------------------
 Add-Computer `
     -ComputerName $computer_name `
@@ -62,7 +62,7 @@ Add-Computer `
     -Force 
 
 #----------------------------------------------------------------------------
-# 03. - Chocolately installieren
+# 03. - install Chocolately 
 #----------------------------------------------------------------------------
 Set-ExecutionPolicy Bypass `
     -Scope Process `
