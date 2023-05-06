@@ -1,25 +1,25 @@
 #============================================================================
-#	Datei:		05 - Working with Report Server.ps1
+#	File:		05 - Working with Report Server.ps1
 #
 #	Summary:	This script shows some samples how to work with
-#               PowerShell and Report Server
+#           PowerShell and Report Server
 #
-#	Datum:		2019-11-02
+#	Date:		    2023-05-06
 #
-#   Revisionen: yyyy-dd-mm
+# Revisionen: yyyy-dd-mm
 #                   - ...
 #
-#	Projekt:	SQL Saturday Oregon 2019
+#	Project:	  SQL Saturday New York City 2023
 #
 #	PowerShell Version: 5.1
 #------------------------------------------------------------------------------
-#	Geschrieben von 
+#	Written by
 #       Frank Geisler, GDS Business Intelligence GmbH
 #
-#   DIESER CODE UND DIE ENTHALTENEN INFORMATIONEN WERDEN OHNE GEWÄHR JEGLICHER
-#   ART ZUR VERFÜGUNG GESTELLT, WEDER AUSDRÜCKLICH NOCH IMPLIZIT, EINSCHLIESSLICH,
-#   ABER NICHT BESCHRÄNKT AUF FUNKTIONALITÄT ODER EIGNUNG FÜR EINEN BESTIMMTEN
-#   ZWECK. SIE VERWENDEN DEN CODE AUF EIGENE GEFAHR.
+# THIS CODE AND THE INFORMATION CONTAINED HEREIN ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND.
+# NATURE, EXPRESS OR IMPLIED, INCLUDING,
+# BUT NOT LIMITED TO FUNCTIONALITY OR FITNESS FOR A PARTICULAR
+# PURPOSE. YOU USE THE CODE AT YOUR OWN RISK.
 #============================================================================*/
 
 #----------------------------------------------------------------------------
@@ -66,3 +66,4 @@ Write-RsFolderContent `
   -ReportServerUri $ReportServerUri `
   -Path "$unzipPath\SQL Server Performance Dashboard" `
   -Destination "/$ReportFolderName" 
+

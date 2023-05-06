@@ -1,27 +1,25 @@
 #============================================================================
-#	Datei:		01 - Setup Azure Environment.ps1
+#	File:		01 - Setup Azure Environment.ps1
 #
 #	Summary:	This script sets up a full environment for Reporting Services
 #               Development in Azure
 #
-#	Datum:		2019-11-01
+#	Date:	    2023-05-06
 #
-#   Revisionen: yyyy-dd-mm
+#   Revisions:  yyyy-dd-mm
 #                   - ...
 # 
-#	Projekt:	SQL Saturday Oregon 2019
+#	Project:	SQL Saturday New York City 2023
 #
 #	PowerShell Version: 5.1
 #------------------------------------------------------------------------------
-#	Geschrieben von 
+#	Written by
 #       Frank Geisler, GDS Business Intelligence GmbH
 #
-#   Dieses Script ist nur zu Lehr- bzw. Lernzwecken gedacht
-#
-#   DIESER CODE UND DIE ENTHALTENEN INFORMATIONEN WERDEN OHNE GEWÄHR JEGLICHER
-#   ART ZUR VERFÜGUNG GESTELLT, WEDER AUSDRÜCKLICH NOCH IMPLIZIT, EINSCHLIESSLICH,
-#   ABER NICHT BESCHRÄNKT AUF FUNKTIONALITÄT ODER EIGNUNG FÜR EINEN BESTIMMTEN
-#   ZWECK. SIE VERWENDEN DEN CODE AUF EIGENE GEFAHR.
+# THIS CODE AND THE INFORMATION CONTAINED HEREIN ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND.
+# NATURE, EXPRESS OR IMPLIED, INCLUDING,
+# BUT NOT LIMITED TO FUNCTIONALITY OR FITNESS FOR A PARTICULAR
+# PURPOSE. YOU USE THE CODE AT YOUR OWN RISK.
 #============================================================================*/
 
 #----------------------------------------------------------------------------
@@ -32,16 +30,16 @@ $resourcegroupName = 'ssrsdemo'
 $location = 'West US'
 
 # Storage
-$storageName = 'ssrsoregonsqlsat'
+$storageName = 'ssrsnycsqlsat'
 $storageType = 'Standard_LRS'
 
-# Netzwerk
-$vnetName = 'vnet-ssrsoregon'
+# Network
+$vnetName = 'vnet-ssrsnyc'
 $subNetName = 'snet-default'
 $VNetAddressPrefix = '10.0.0.0/16'
 $VNetSubnetAddressPrefix = '10.0.0.0/24'
 
-# Compute für dc01
+# Compute for dc01
 $dc01_publisherName = 'MicrosoftWindowsServer'
 $dc01_offer = 'WindowsServer'
 $dc01_sku = '2016-Datacenter'
@@ -52,7 +50,7 @@ $dc01_OSDiskName = 'osdisk_'+$dc01_VMName
 $dc01_InterfaceName = 'nic_'+$dc01_VMName
 $dc01_PipName = 'pip_'+$dc01_VMName
 
-# Compute für sql
+# Compute for sql
 $sql_publisherName = 'MicrosoftSQLServer'
 $sql_offer = 'SQL2017-WS2016'
 $sql_sku = 'SQLDEV'
@@ -63,7 +61,7 @@ $sql_OSDiskName = 'osdisk_'+$sql_VMName
 $sql_InterfaceName = 'nic_'+$sql_VMName
 $sql_PipName = 'pip_'+$sql_VMName
 
-# Compute für client
+# Compute for client
 $client_publisherName = 'MicrosoftWindowsDesktop'
 $client_offer = 'Windows-10'
 $client_sku = '19h1-pro'
@@ -75,25 +73,23 @@ $client_InterfaceName = 'nic_'+$client_VMName
 $client_PipName = 'pip_'+$client_VMName
 
 #--------------------------------------------------------------------------
-# 01. - Login to Azure
+# 01. Login to Azure
 # -------------------------------------------------------------------------
-
 Login-AzureRmAccount
 Get-AzureRmSubscription `
    -SubscriptionName $SubscriptionName | Set-AzureRmContext
 
 #--------------------------------------------------------------------------
-# 02. - Create Resource Group
+# 02. Create Resource Group
 # -------------------------------------------------------------------------
 New-AzureRmResourceGroup `
     -Name $resourcegroupName `
     -Location $location
 
 #----------------------------------------------------------------------------
-# 03. - Create Storage
-#       The name in $storageName must be unique
+# 03. Create Storage
+#     The name in $storageName must be unique
 #----------------------------------------------------------------------------
-
 $storageAccount = New-AzureRmStorageAccount `
                          -ResourceGroupName $resourcegroupName `
                          -Name $storageName `
@@ -101,7 +97,7 @@ $storageAccount = New-AzureRmStorageAccount `
                          -Location $location
 
 #----------------------------------------------------------------------------
-# 04. - VNet anlegen
+# 04. Create VNet
 #----------------------------------------------------------------------------
 $SubnetConfig = New-AzureRmVirtualNetworkSubnetConfig `
                       -Name $subNetName `
@@ -115,25 +111,25 @@ $vn = New-AzureRmVirtualNetwork `
              -Subnet $SubnetConfig
 
 #----------------------------------------------------------------------------
-# 05. - Reading credentails from the user. Here you could also get credentials
-#       from the Azure Key Vault
-#       fgeisler
-#       !sqloregon2019    
+# 05. Reading credentails from the user. Here you could also get credentials
+#     from the Azure Key Vault
+#     ssmsadmin
+#     !test1234567890    
 #----------------------------------------------------------------------------
 $Credential = Get-Credential
 
 #--------------------------------------------------------------------------
-# 06. - virtuelle Maschine dc01 anlegen
+# 06. Create virtual machine dc01
 # -------------------------------------------------------------------------
 
-# Public IP-Adresse anlegen
+# Create Public IP-Adresse
 $pip_dc01 = New-AzureRmPublicIpAddress `
                 -Name $dc01_PipName `
                 -ResourceGroupName $resourcegroupName `
                 -Location $location `
                 -AllocationMethod Dynamic
 
-# Netzwerk-Interface anlegen
+# Create Network Interface
 $nic_dc01 = New-AzureRmNetworkInterface `
                         -Name $dc01_InterfaceName `
                         -ResourceGroupName $resourcegroupName `
@@ -141,7 +137,7 @@ $nic_dc01 = New-AzureRmNetworkInterface `
                         -SubnetId $vn.Subnets[0].Id `
                         -PublicIpAddressId $pip_dc01.Id
 
-# Jetzt wird die eigentliche VM angelegt
+# Creating the Configuration for the VM
 $vmConfig_dc01 = New-AzureRmVMConfig `
                         -VMName $dc01_VMName `
                         -VMSize  $dc01_VMSize | `
@@ -164,24 +160,24 @@ $vmConfig_dc01 = New-AzureRmVMConfig `
                                             -Skus $dc01_sku `
                                             -Version $dc01_os_Version
 
-# virtuelle Maschine erzeugen
+# Create the Virtual Machine
 New-AzureRmVM `
     -ResourceGroupName $resourcegroupName `
     -Location $location `
     -VM $vmConfig_dc01
 
 #--------------------------------------------------------------------------
-# 06. - virtuelle Maschine sql anlegen
+# 06. Create virtual machine sql
 # -------------------------------------------------------------------------
 
-# Public IP-Adresse anlegen
+# Create Public IP-Adresse
 $pip_sql = New-AzureRmPublicIpAddress `
                 -Name $sql_PipName `
                 -ResourceGroupName $resourcegroupName `
                 -Location $location `
                 -AllocationMethod Dynamic
 
-# Netzwerk-Interface anlegen
+# Create Network Interface
 $nic_sql = New-AzureRmNetworkInterface `
                         -Name $sql_InterfaceName `
                         -ResourceGroupName $resourcegroupName `
@@ -189,7 +185,7 @@ $nic_sql = New-AzureRmNetworkInterface `
                         -SubnetId $vn.Subnets[0].Id `
                         -PublicIpAddressId $pip_sql.Id
 
-# Jetzt wird die eigentliche VM angelegt
+# Creating the Configuration for the VM
 $vmConfig_sql = New-AzureRmVMConfig `
                         -VMName $sql_VMName `
                         -VMSize  $sql_VMSize | `
@@ -212,24 +208,24 @@ $vmConfig_sql = New-AzureRmVMConfig `
                                             -Skus $sql_sku `
                                             -Version $sql_os_Version
 
-# virtuelle Maschine erzeugen
+# Create the Virtual Machine
 New-AzureRmVM `
     -ResourceGroupName $resourcegroupName `
     -Location $location `
     -VM $vmConfig_sql
 
 #--------------------------------------------------------------------------
-# 06. - virtuelle Maschine client anlegen
+# 07. Create virtual machine client
 # -------------------------------------------------------------------------
 
-# Public IP-Adresse anlegen
+# Create Public IP-Adresse
 $pip_client = New-AzureRmPublicIpAddress `
                 -Name $client_PipName `
                 -ResourceGroupName $resourcegroupName `
                 -Location $location `
                 -AllocationMethod Dynamic
 
-# Netzwerk-Interface anlegen
+# Create Network Interface
 $nic_client = New-AzureRmNetworkInterface `
                         -Name $client_InterfaceName `
                         -ResourceGroupName $resourcegroupName `
@@ -237,7 +233,7 @@ $nic_client = New-AzureRmNetworkInterface `
                         -SubnetId $vn.Subnets[0].Id `
                         -PublicIpAddressId $pip_client.Id
 
-# Jetzt wird die eigentliche VM angelegt
+# Creating the Configuration for the VM
 $vmConfig_client = New-AzureRmVMConfig `
                         -VMName $client_VMName `
                         -VMSize  $client_VMSize | `
@@ -260,7 +256,7 @@ $vmConfig_client = New-AzureRmVMConfig `
                                             -Skus $client_sku `
                                             -Version $client_os_Version
 
-# virtuelle Maschine erzeugen
+# Create the Virtual Machine
 New-AzureRmVM `
     -ResourceGroupName $resourcegroupName `
     -Location $location `

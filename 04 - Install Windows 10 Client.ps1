@@ -1,25 +1,24 @@
 #============================================================================
 #	Datei:		03 - Setup Win10 Client.ps1
 #
-#	Summary:	In diesem Script steht alles was man braucht um den Windows 10
-#               Client zu installieren
+#	Summary:	This script contains the steps to setup a Windows 10 Client
 #
-#	Datum:		2019-10-13
+#	Date:	    2023-05-06
 #
-#   Revisionen: yyyy-dd-mm
+#   Revisions:  yyyy-dd-mm
 #                   - ...
 #
-#	Projekt:	SQL Saturday Oregon 2019
+#	Project:	SQL Saturday New York City 2023
 #
 #	PowerShell Version: 5.1
 #------------------------------------------------------------------------------
-#	Geschrieben von 
+#	Written by
 #       Frank Geisler, GDS Business Intelligence GmbH
 #
-#   DIESER CODE UND DIE ENTHALTENEN INFORMATIONEN WERDEN OHNE GEWÄHR JEGLICHER
-#   ART ZUR VERFÜGUNG GESTELLT, WEDER AUSDRÜCKLICH NOCH IMPLIZIT, EINSCHLIESSLICH,
-#   ABER NICHT BESCHRÄNKT AUF FUNKTIONALITÄT ODER EIGNUNG FÜR EINEN BESTIMMTEN
-#   ZWECK. SIE VERWENDEN DEN CODE AUF EIGENE GEFAHR.
+# THIS CODE AND THE INFORMATION CONTAINED HEREIN ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND.
+# NATURE, EXPRESS OR IMPLIED, INCLUDING,
+# BUT NOT LIMITED TO FUNCTIONALITY OR FITNESS FOR A PARTICULAR
+# PURPOSE. YOU USE THE CODE AT YOUR OWN RISK.
 #============================================================================*/
 
 #----------------------------------------------------------------------------
@@ -30,7 +29,7 @@ $domain_name = 'ssrs.net'
 $admin_user = 'SSRS\fgeisler'
 
 #--------------------------------------------------------------------------
-# 01. - Client aktualisieren
+# 01. Update Client
 # -------------------------------------------------------------------------
 Set-ExecutionPolicy `
   -ExecutionPolicy Unrestricted `
@@ -44,7 +43,7 @@ Install-WindowsUpdate `
    -AutoReboot   
 
 #--------------------------------------------------------------------------
-# 02. - Computer zur Domäne hinzufügen
+# 02. Add Computer to the Domain
 # -------------------------------------------------------------------------
 Add-Computer `
     -ComputerName $computer_name `
@@ -54,14 +53,14 @@ Add-Computer `
     -Force 
 
 #----------------------------------------------------------------------------
-# 03. - Chocolately installieren
+# 03. Install Chocolately
 #----------------------------------------------------------------------------
 Set-ExecutionPolicy Bypass `
     -Scope Process `
     -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
 #----------------------------------------------------------------------------
-# 04. Software installieren
+# 04. Install Software
 #----------------------------------------------------------------------------
 choco install googlechrome -y 
 choco install azure-data-studio -y
@@ -72,20 +71,20 @@ choco install git -params '"/GitAndUnixToolsOnPath"' -y
 choco install gitkraken -y
 
 #----------------------------------------------------------------------------
-# 05. NavContainer Helper installieren
+# 05. Install NavContainer Helper
 #----------------------------------------------------------------------------
 Install-Module `
     -Name 'NavContainerHelper'
 
-# Checken ob das richtig installiert wurde
+# Check if it was installed correctly
 Write-NavContainerHelperWelcomeText  
 
 #----------------------------------------------------------------------------
-# 06. Firewall für HTTP öffnen
+# 06. Open Firwall for HTTP
 #----------------------------------------------------------------------------
 New-NetFirewallRule `
     -DisplayName 'HTTP' `
     -Direction Inbound `
-    –Protocol TCP `
-    –LocalPort 80 `
+    -Protocol TCP `
+    -LocalPort 80 `
     -Action Allow

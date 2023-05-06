@@ -1,23 +1,23 @@
 #============================================================================
-#	Datei:		02 - Setup Domain.ps1
+#	File:	  02 - Setup Domain.ps1
 #
-#	Summary:	Install the Active Directory Domain on dc01
+#	Summary:  Install the Active Directory Domain on dc01
 #
-#	Datum:		2019-10-13
+#	Date:	  2023-05-06
 #
-#   Revisionen: yyyy-dd-mm
+#   Revision: yyyy-dd-mm
 #
-#	Projekt:	SQL Saturday Oregon 2019
+#	Project:  SQL Saturday New York City 2023
 #
 #	PowerShell Version: 5.1
 #------------------------------------------------------------------------------
-#	Geschrieben von 
-#       Frank Geisler, GDS Business Intelligence GmbH
+# Written by
+#   Frank Geisler, GDS Business Intelligence GmbH
 #
-#   DIESER CODE UND DIE ENTHALTENEN INFORMATIONEN WERDEN OHNE GEWÄHR JEGLICHER
-#   ART ZUR VERFÜGUNG GESTELLT, WEDER AUSDRÜCKLICH NOCH IMPLIZIT, EINSCHLIESSLICH,
-#   ABER NICHT BESCHRÄNKT AUF FUNKTIONALITÄT ODER EIGNUNG FÜR EINEN BESTIMMTEN
-#   ZWECK. SIE VERWENDEN DEN CODE AUF EIGENE GEFAHR.
+# THIS CODE AND THE INFORMATION CONTAINED HEREIN ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND.
+# NATURE, EXPRESS OR IMPLIED, INCLUDING,
+# BUT NOT LIMITED TO FUNCTIONALITY OR FITNESS FOR A PARTICULAR
+# PURPOSE. YOU USE THE CODE AT YOUR OWN RISK.
 #============================================================================*/
 
 #----------------------------------------------------------------------------
@@ -34,7 +34,7 @@ $SafeModeAdministratorPassword = ConvertTo-SecureString 'Pa$w0rd1' `
                                     -Force
 
 #--------------------------------------------------------------------------
-# 01. - Update Server
+# 01. Update Server
 # -------------------------------------------------------------------------
 Set-ExecutionPolicy `
   -ExecutionPolicy Unrestricted `
@@ -48,7 +48,7 @@ Install-WindowsUpdate `
    -AutoReboot                                    
 
 #----------------------------------------------------------------------------
-# 02. - Install Domain
+# 02. Install Domain
 #----------------------------------------------------------------------------
 Install-WindowsFeature `
     -name AD-Domain-Services `
@@ -67,8 +67,11 @@ Install-ADDSForest `
     -Confirm:$false
 
 #----------------------------------------------------------------------------
-# 03. - Install Chocolately
+# 03. Install Chocolately
 #----------------------------------------------------------------------------
+# Set TSL secuerity protocol
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 Set-ExecutionPolicy Bypass `
     -Scope Process `
     -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
@@ -99,7 +102,7 @@ New-ADUser `
     -Enabled:$true
 
 #----------------------------------------------------------------------------
-# 06. - AD-User ReportAdmin erstellen
+# 06. Create AD-User ReportAdmin
 #----------------------------------------------------------------------------
 $AccountPath = 'CN=Users,DC=ssrs,DC=net'
 $ReportAdmin_username = 'ReportAdmin'

@@ -1,23 +1,24 @@
 #============================================================================
-#	Datei:		04 - Setup SQL Server.ps1
+#	File:		04 - Setup SQL Server.ps1
 #
 #	Summary:	This script brings the sql server into the domain
 #
-#	Datum:		2019-10-13
+#	Date:	    2023-05-06
 #
-#   Revisionen: yyyy-dd-mm
+# Revisions: yyyy-dd-mm
 #                   - ...
-#	Projekt:	SQL Saturday Oregon 2019
+#
+#	Project:	SQL Saturday New York City 2023
 #
 #	PowerShell Version: 5.1
 #------------------------------------------------------------------------------
-#	Geschrieben von 
+#	Written by
 #       Frank Geisler, GDS Business Intelligence GmbH
 #
-#   DIESER CODE UND DIE ENTHALTENEN INFORMATIONEN WERDEN OHNE GEWÄHR JEGLICHER
-#   ART ZUR VERFÜGUNG GESTELLT, WEDER AUSDRÜCKLICH NOCH IMPLIZIT, EINSCHLIESSLICH,
-#   ABER NICHT BESCHRÄNKT AUF FUNKTIONALITÄT ODER EIGNUNG FÜR EINEN BESTIMMTEN
-#   ZWECK. SIE VERWENDEN DEN CODE AUF EIGENE GEFAHR.
+# THIS CODE AND THE INFORMATION CONTAINED HEREIN ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND.
+# NATURE, EXPRESS OR IMPLIED, INCLUDING,
+# BUT NOT LIMITED TO FUNCTIONALITY OR FITNESS FOR A PARTICULAR
+# PURPOSE. YOU USE THE CODE AT YOUR OWN RISK.
 #============================================================================*/
 
 #----------------------------------------------------------------------------
@@ -25,7 +26,7 @@
 #----------------------------------------------------------------------------
 $computer_name = 'sql'
 $domain_name = 'ssrs.net'
-$admin_user = 'SSRS\fgeisler'
+$admin_user = 'SSRS\ssrsadmin'
 
 # ReportServer
 $database_servername = 'localhost'
@@ -64,6 +65,9 @@ Add-Computer `
 #----------------------------------------------------------------------------
 # 03. - Chocolately installieren
 #----------------------------------------------------------------------------
+# set tsl secuerity protocol
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 Set-ExecutionPolicy Bypass `
     -Scope Process `
     -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
@@ -73,7 +77,7 @@ Set-ExecutionPolicy Bypass `
 #     Since 2017 Reporting Services is its own download
 #----------------------------------------------------------------------------
 choco install googlechrome -y 
-choco install ssrs -y
+choco install ssrs -y --ignore-checksums
 
 #----------------------------------------------------------------------------
 # 05. Install ReportingServicesTools (PowerShell)
@@ -89,6 +93,7 @@ Set-RsDatabase `
   -Name $report_servername `
   -ReportServerInstance $report_serverinstance `
   -DatabaseCredentialType ServiceAccount `
+  -ReportServerVersion SQLServer2017
  
 Set-RsUrlReservation `
   -SqlServerVersion $sqlserver_version `
@@ -100,8 +105,8 @@ Set-RsUrlReservation `
 New-NetFirewallRule `
     -DisplayName 'HTTP' `
     -Direction Inbound `
-    –Protocol TCP `
-    –LocalPort 80 `
+    -Protocol TCP `
+    -LocalPort 80 `
     -Action Allow
 
 #----------------------------------------------------------------------------
